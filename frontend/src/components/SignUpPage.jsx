@@ -1,6 +1,7 @@
 import React from 'react'
 import { SignIn,SignedIn,SignedOut,SignUp } from '@clerk/clerk-react'
 import { neobrutalism } from '@clerk/themes'
+import Home from '../pages/Home'
 
 const SignUpPage = () => {
   return (
@@ -12,7 +13,7 @@ const SignUpPage = () => {
  </SignedOut>
 
  <SignedIn>
-         <p>You are already signed in!</p>
+         <Home/>
        </SignedIn>
        </>
   )
