@@ -17,13 +17,13 @@ if (!PUBLISHABLE_KEY) {
 const App = () => {
   return (
     <ClerkProvider publishableKey={PUBLISHABLE_KEY} afterSignOutUrl="/">
+    <BrowserRouter>
     <AuthProvider>
 
-    <BrowserRouter>
 
     <Routers/>
-    </BrowserRouter>
     </AuthProvider>
+    </BrowserRouter>
     </ClerkProvider>
     
   )

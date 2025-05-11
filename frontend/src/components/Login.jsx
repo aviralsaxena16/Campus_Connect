@@ -20,9 +20,6 @@ const Login = () => {
        
       
       {First ? <Sign/> : <SignUpPage/>}
-      
-
-    
     
     
   </div>
