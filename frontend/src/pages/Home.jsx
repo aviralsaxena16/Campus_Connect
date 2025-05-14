@@ -1,8 +1,7 @@
 import React from 'react'
 import bg from '../assets/bg.png';
-import Navbar from '../components/Navbar'
-
-
+import Navbar from '../section/Navbar'
+import Dashboard from '../section/Dashboard';
 const Home = () => {
   return (
     <div
@@ -10,7 +9,8 @@ const Home = () => {
           style={{ backgroundImage: `url(${bg})` }}>
 
       <Navbar/>
-            
+      
+      {/* <Dashboard/> */}
     </div>
   )
 }

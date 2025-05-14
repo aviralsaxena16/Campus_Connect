@@ -11,12 +11,10 @@ const Landing = () => {
   const { isSignedIn } = useAuth();
   const navigate = useNavigate();
   const { isLoaded, user } = useUser();
+
   useEffect(() => {
-    let isRequestSent = false;
-  
     const registerUser = async () => {
-      if (isSignedIn && isLoaded && !isRequestSent) {
-        isRequestSent = true; // Prevent duplicate requests
+      if (isSignedIn && isLoaded) {
         const userData = {
           id: user.id,
           email: user.primaryEmailAddress?.emailAddress,
@@ -24,10 +22,9 @@ const Landing = () => {
           lastName: user.lastName || '',
           imageUrl: user.imageUrl || '',
         };
-        console.log('Sending to backend:', JSON.stringify(userData, null, 2));
 
-        console.log('User data being sent:', userData);
-  
+        console.log('Sending user data to backend:', userData);
+
         try {
           const response = await axios.post('http://localhost:3000/register', userData, {
             headers: {
@@ -35,18 +32,18 @@ const Landing = () => {
             },
             withCredentials: true,
           });
-          console.log('Registration successful:', response.data);
+
+          console.log('Registration handled:', response.data);
           navigate('/home');
         } catch (err) {
           console.error('Error registering user:', err.response?.data || err.message);
         }
       }
     };
-  
+
     registerUser();
   }, [isSignedIn, isLoaded, user, navigate]);
 
-  
   if (!isSignedIn) {
     return (
       <div

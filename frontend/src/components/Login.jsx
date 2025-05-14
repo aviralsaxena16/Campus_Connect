@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 const Login = () => {
-  const navigate=useNavigate()
+  
   const [First,setFirst]=useState(false)
 
   return (

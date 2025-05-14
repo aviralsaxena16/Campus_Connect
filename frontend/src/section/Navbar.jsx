@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search } from 'lucide-react';
+import Logout from '../components/Logout';
 
 const Navbar = () => {
   return (
@@ -26,6 +27,7 @@ const Navbar = () => {
         <div className="text-white cursor-pointer">
           <Search />
         </div>
+        <Logout/>
       </nav>
     </div>
   );
