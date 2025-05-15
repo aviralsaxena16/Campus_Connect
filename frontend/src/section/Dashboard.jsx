@@ -7,7 +7,7 @@ const Dashboard = () => {
     const {user}=useUser()
     useEffect(() => {
         if (user) {
-          socket.emit("register", user._id);
+          socket.emit("register", user.id);
         }
       }, [user]);
 

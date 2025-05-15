@@ -2,49 +2,48 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import User from './model/User.js';
-import http from 'http'
+import http from 'http';
 import { Server } from 'socket.io';
 
 const app = express();
 const server = http.createServer(app);
 
-app.use(express.json()); // Parse JSON bodies
+app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5173', // Frontend origin
+  origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT'],
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173', // your frontend
+    origin: 'http://localhost:5173',
     methods: ['GET', 'POST'],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 
-const users={}
+const users = {};
 
-io.on('connection',(socket)=>{
-    
-    socket.on("register", (userId) => {
-      users[userId] = socket.id;
-      console.log(`User ${userId} registered with socket ${socket.id}`);
-    });
+io.on('connection', (socket) => {
+  console.log('A user connected:', socket.id);
 
+  socket.on('register', (userId) => {
+    users[userId] = socket.id;
+    console.log(`User ${userId} registered with socket ${socket.id}`);
+  });
 
-    socket.on("disconnect", () => {
-      for (let [id, sock] of Object.entries(users)) {
-        if (sock === socket.id) {
-          delete users[id];
-          break;
-        }
+  socket.on('disconnect', () => {
+    for (let [id, sock] of Object.entries(users)) {
+      if (sock === socket.id) {
+        delete users[id];
+        break;
       }
-      console.log("User disconnected");
-    });
-})
-
+    }
+    console.log('User disconnected:', socket.id);
+  });
+});
 //  Connect to MongoDB
 mongoose.connect('mongodb+srv://aviralsaxena2006:WVYis3UqHDMsZVLC@cluster0.elh7l9d.mongodb.net/campus_connect?retryWrites=true&w=majority&appName=Cluster0', {
   useNewUrlParser: true,
@@ -91,6 +90,6 @@ app.post('/register', async (req, res) => {
 });
 
 // ✅ Start the server
-app.listen(3000, () => {
+server.listen(3000, () => {
   console.log('Server running on http://localhost:3000');
 });
