@@ -1,10 +1,30 @@
-import React from 'react';
-import { Search } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { User } from 'lucide-react';
 import Logout from '../components/Logout';
+import Profile from './Profile';
 
 const Navbar = () => {
+  const [show, setShow] = useState(false);
+  const dropdownRef = useRef();
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        setShow(false);
+      }
+    };
+    if (show) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [show]);
+
   return (
-    <div className="p-1">
+    <div className="p-1" style={{ position: 'relative' }}>
       <nav
         className="
           bg-[#ffcc00]  /* Vibrant yellow background */
@@ -56,7 +76,7 @@ const Navbar = () => {
           Campus Connect
         </h1>
 
-        {/* Right: Search Icon */}
+        {/* Right: Search Icon (hidden for now) */}
         <div
           className="
             text-black cursor-pointer
@@ -67,10 +87,39 @@ const Navbar = () => {
             hover:bg-[#b9e2f8] transition
           "
         >
-          <Search />
+          {/* <Search /> */}
         </div>
-        <div className="ml-4">
+        <div className="flex items-center ml-4 space-x-3" ref={dropdownRef}>
           <Logout />
+          {/* User Icon Button */}
+          <button
+            className="
+              border-2 border-black rounded-full
+              bg-white p-2 ml-2
+              shadow-[4px_4px_0_0_rgba(0,0,0,1)]
+              hover:bg-[#40d39c] transition
+              text-black
+              flex items-center justify-center
+            "
+            aria-label="Profile"
+            onClick={() => setShow((prev) => !prev)}
+            type="button"
+          >
+            <User size={24} strokeWidth={3} />
+          </button>
+          {/* Profile Dropdown */}
+          {show && (
+            <div
+              style={{
+                position: 'absolute',
+                top: '110%',
+                right: 0,
+                zIndex: 100,
+              }}
+            >
+              <Profile />
+            </div>
+          )}
         </div>
       </nav>
     </div>
