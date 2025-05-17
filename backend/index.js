@@ -6,6 +6,8 @@ import User from './model/User.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import { clerkMiddleware } from '@clerk/express';
+import fileUpload from 'express-fileupload';
+import cloudinary from './config/cloudinary.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -29,6 +31,8 @@ app.use(clerkMiddleware({
   publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
   secretKey: process.env.CLERK_SECRET_KEY,
 }));
+
+app.use(fileUpload({ useTempFiles: true }));
 
 // Socket.IO setup
 const io = new Server(server, {
@@ -110,12 +114,21 @@ app.put('/updateUser', async (req, res) => {
 // Image upload endpoint
 app.post('/uploadImage', async (req, res) => {
   try {
-    // Implement your image upload logic here
-    // Return the new image URL
-    res.json({ success: true, imageUrl: 'new-image-url' });
+    if (!req.auth?.userId) return res.status(401).json({message:'Unauthorised access'})
+    
+      
+      const file = req.files.image; // file comes from frontend
+      const result = await cloudinary.uploader.upload(file.tempFilePath, {
+        folder: 'profile_pics',
+      });
+    const updatedUser =await User.findOneAndUpdate({id: req.auth.userId},{ imageUrl: result.secure_url } , { new: true })
+     
+    if (!updatedUser) return res.status(404).json({ message: 'User not found' });
+    console.log(updatedUser)
+    res.json({ success: true, user:updatedUser });
   } catch (error) {
     console.error(error);
-    res.status(400).json({ message: 'Upload failed' });
+    res.status(400).json({ message: 'Update failed' });
   }
 });
 

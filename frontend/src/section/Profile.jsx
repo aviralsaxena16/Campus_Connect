@@ -25,7 +25,7 @@ const Profile = () => {
       }
     };
     getProfile();
-  }, [getToken]);
+  }, [getToken,user]);
 
   const handleEditToggle = () => {
     if (isEditing) {
@@ -49,6 +49,7 @@ const Profile = () => {
       
       if (response.data.success) {
         setUser(response.data.user);
+        setProfileImage(user.imageUrl)
         setIsEditing(false);
       }
     } catch (error) {
@@ -72,7 +73,10 @@ const Profile = () => {
       );
       
       if (response.data.success) {
-        setUser(prev => ({ ...prev, imageUrl: response.data.imageUrl }));
+        setUser(response.data.user);
+        console.log(user)
+        setProfileImage(response.data.user.imageUrl);
+        // setIsEditing(false);
       }
     } catch (error) {
       console.error('Error uploading image:', error);
