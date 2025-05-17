@@ -87,4 +87,36 @@ app.post('/getUser', async (req, res) => {
   }
 });
 
+
+app.put('/updateUser', async (req, res) => {
+  try {
+    if (!req.auth?.userId) return res.status(401).json({ message: 'Unauthorized' });
+    
+    const updatedUser = await User.findOneAndUpdate(
+      { id: req.auth.userId },
+      req.body,
+      { new: true }
+    );
+    
+    if (!updatedUser) return res.status(404).json({ message: 'User not found' });
+    
+    res.json({ success: true, user: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: 'Update failed' });
+  }
+});
+
+// Image upload endpoint
+app.post('/uploadImage', async (req, res) => {
+  try {
+    // Implement your image upload logic here
+    // Return the new image URL
+    res.json({ success: true, imageUrl: 'new-image-url' });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: 'Upload failed' });
+  }
+});
+
 server.listen(3000, () => console.log('Server running on http://localhost:3000'));
