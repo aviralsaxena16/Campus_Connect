@@ -81,10 +81,10 @@ app.post('/getUser', async (req, res) => {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const person = await User.findOne({ id: req.auth.userId }).select('-password');
-    if (!person) return res.status(404).json({ message: 'User not found' });
-
-    res.json({ success: true, person });
+   
+    const user = await User.findOne({ id: req.auth.userId });
+    if (!user) return res.status(404).json({ success: false });
+    res.json({ success: true, person: user }); 
   } catch (error) {
     console.error('GetUser error:', error);
     res.status(400).json({ message: 'Request failed' });
@@ -125,7 +125,7 @@ app.post('/uploadImage', async (req, res) => {
      
     if (!updatedUser) return res.status(404).json({ message: 'User not found' });
     console.log(updatedUser)
-    res.json({ success: true, user:updatedUser });
+    res.json({ success: true, user:updatedUser ,imageUrl:result.secure_url});
   } catch (error) {
     console.error(error);
     res.status(400).json({ message: 'Update failed' });

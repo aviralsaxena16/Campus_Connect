@@ -8,7 +8,8 @@ const Profile = () => {
   const [tempUser, setTempUser] = useState({});
   const { getToken } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
-  const [profileImage, setProfileImage] = useState(null);
+  const [loading, setLoading] = useState(true); // <-- Loading state
+    // const [pic,setPic]=useState(null)
 
   useEffect(() => {
     const getProfile = async () => {
@@ -19,20 +20,23 @@ const Profile = () => {
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        if (response.data.success) setUser(response.data.person);
+        if (response.data.success) {
+            setUser(response.data.person);
+            // setPic(response.data.person.imageUrl)
+        }
       } catch (error) {
         console.error('Error fetching profile:', error);
+      } finally {
+        setLoading(false); // <-- Done loading
       }
     };
     getProfile();
-  }, [getToken,user]);
+  }, [getToken,isEditing]);
 
   const handleEditToggle = () => {
     if (isEditing) {
-      // Cancel editing
       setIsEditing(false);
     } else {
-      // Start editing
       setTempUser({ ...user });
       setIsEditing(true);
     }
@@ -46,10 +50,10 @@ const Profile = () => {
         { ...tempUser },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       if (response.data.success) {
         setUser(response.data.user);
-        setProfileImage(user.imageUrl)
+        // setPic(response.data.user.imageUrl)
         setIsEditing(false);
       }
     } catch (error) {
@@ -71,12 +75,11 @@ const Profile = () => {
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      
+
       if (response.data.success) {
         setUser(response.data.user);
-        console.log(user)
-        setProfileImage(response.data.user.imageUrl);
-        // setIsEditing(false);
+        // setPic(response.data.user.imageUrl)
+        console.log(response.data.user);
       }
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -102,7 +105,6 @@ const Profile = () => {
     fontWeight: '600',
     margin: '0.5rem'
   };
-
   return (
     <div
       className="neo-brutal-profile"
@@ -122,7 +124,7 @@ const Profile = () => {
         <>
           <div style={{ position: 'relative' }}>
             <img
-              src={profileImage || user.imageUrl}
+              src={user.imageUrl}
               alt={`${user.firstName} ${user.lastName}`}
               style={{
                 width: '80px',
