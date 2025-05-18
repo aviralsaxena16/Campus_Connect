@@ -1,10 +1,15 @@
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import { useUser } from '@clerk/clerk-react';
 import socket from '../socket';
-import { useEffect } from 'react';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Sidebar from './Sidebar';
 
 const Dashboard = () => {
     const {user}=useUser()
+    
+    
     useEffect(() => {
         if (user) {
           socket.emit("register", user.id);
@@ -12,7 +17,12 @@ const Dashboard = () => {
       }, [user]);
 
   return (
-    <div>Dashboard</div>
+    <Container>
+    <Row>
+      <Col xs={12} md={4}><Sidebar/></Col>
+      <Col xs={12} md={8}>Main content</Col>
+    </Row>    
+    </Container>
   )
 }
 
