@@ -1,9 +1,10 @@
 import mongoose from "mongoose"
-import User from "./User"
+import User from "./User.js"
+import Chat from "./chatModel.js"
 
-const MessageModel= mongoose.schema(
-    {chat: { type: mongoose.Schema.Types.ObjectId, ref: "Chat" },
-  sender: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+const MessageModel= mongoose.Schema(
+    {chat: { type: mongoose.Schema.Types.ObjectId, ref: 'Chat' },
+  sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   content: String,
   timestamp: { type: Date, default: Date.now },}
 )

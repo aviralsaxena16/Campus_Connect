@@ -8,6 +8,9 @@ import { Server } from 'socket.io';
 import { clerkMiddleware } from '@clerk/express';
 import fileUpload from 'express-fileupload';
 import cloudinary from './config/cloudinary.js';
+import Chat from './model/chatModel.js';
+import Message from './model/MessageModel.js';
+
 
 const app = express();
 const server = http.createServer(app);
@@ -131,5 +134,24 @@ app.post('/uploadImage', async (req, res) => {
     res.status(400).json({ message: 'Update failed' });
   }
 });
+
+
+app.post("/getChannels", async (req, res) => {
+  const channels = await Chat.find({ isChannel: true });
+  if (!channels){
+    return res.status(201).json({Message:'Something went wrong'})
+  }
+  res.json({ success: true, channels:channels });
+});
+
+
+app.post("/getChats", async (req, res) => {
+  const chats = await Chat.find({ isChannel: false });
+  if (!chats){
+    return res.status(201).json({Message:'Something went wrong'})
+  }
+  res.json({ success: true, chats:chats});
+});
+
 
 server.listen(3000, () => console.log('Server running on http://localhost:3000'));

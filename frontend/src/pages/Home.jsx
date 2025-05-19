@@ -5,13 +5,13 @@ import Dashboard from '../section/Dashboard';
 const Home = () => {
   return (
     <div
-          className="h-screen w-full bg-cover bg-center "
-          style={{ backgroundImage: `url(https://png.pngtree.com/thumb_back/fw800/background/20190828/pngtree-80-style-background-with-geometric-colorful-shapes-image_307997.jpg)` }}>
+  className="min-h-screen w-full bg-cover bg-center"
+  style={{ backgroundImage: `url(https://png.pngtree.com/thumb_back/fw800/background/20190828/pngtree-80-style-background-with-geometric-colorful-shapes-image_307997.jpg)` }}
+>
+  <Navbar />
+  <Dashboard />
+</div>
 
-      <Navbar/>
-      
-      <Dashboard/>
-    </div>
   )
 }
 

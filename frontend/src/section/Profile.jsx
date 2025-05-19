@@ -22,12 +22,11 @@ const Profile = () => {
         );
         if (response.data.success) {
             setUser(response.data.person);
-            // setPic(response.data.person.imageUrl)
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
       } finally {
-        setLoading(false); // <-- Done loading
+        setLoading(false); 
       }
     };
     getProfile();
