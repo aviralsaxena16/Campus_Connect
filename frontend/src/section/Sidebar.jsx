@@ -2,12 +2,15 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Button from 'react-bootstrap/Button';
 import { useAuth } from '@clerk/clerk-react';
 import axios from 'axios';
+import { useChat } from '../../context/ChatContext';
 
 const Sidebar = ({ search }) => {
   const [tab, setTab] = useState(0); // 0 = Channels, 1 = Personal
   const [chats, setChats] = useState([]);
   const [channels, setChannels] = useState([]);
   const { getToken } = useAuth();
+  const { setSelectedChat, setIsChannel } = useChat()
+
 
   const searchTerm = (search || '').trim().toLowerCase();
   const isSearching = searchTerm.length > 0;
@@ -93,7 +96,11 @@ const Sidebar = ({ search }) => {
           </div>
         ) : (
           listToRender.map((item, index) => (
-            <div key={item?._id ?? `item-${index}`} className="chat-item">
+            <div key={item?._id ?? `item-${index}`} onClick={() => {
+              setSelectedChat(item);
+              setIsChannel(tab === 0); // 0 => channels, 1 => DMs
+            }}
+              className="chat-item">
               <div className="avatar">
                 {item?.profilePic ? (
                   <img src={item.profilePic} alt={item.chatName || item.name || 'Chat'} />

@@ -5,6 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { ClerkProvider } from '@clerk/clerk-react'
 import {neobrutalism } from '@clerk/themes'
 import { AuthProvider } from './context/AuthContext'
+import { ChatProvider } from '../context/ChatContext';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
@@ -20,8 +21,9 @@ const App = () => {
     <BrowserRouter>
     <AuthProvider>
 
-
+    <ChatProvider>
     <Routers/>
+    </ChatProvider>
     </AuthProvider>
     </BrowserRouter>
     </ClerkProvider>
