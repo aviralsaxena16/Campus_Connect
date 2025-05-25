@@ -3,7 +3,7 @@ import { User } from 'lucide-react';
 import Logout from '../components/Logout';
 import Profile from './Profile';
 
-const Navbar = () => {
+const Navbar = ({setSearch}) => {
   const [show, setShow] = useState(false);
   const dropdownRef = useRef();
 
@@ -38,7 +38,7 @@ const Navbar = () => {
         }}
       >
         {/* Left: Search Input */}
-        <form className="flex items-center space-x-2">
+        <form className="flex items-center space-x-2" onSubmit={(e) => e.preventDefault()}>
           <div
             className="
               flex items-center bg-white rounded-lg
@@ -47,6 +47,8 @@ const Navbar = () => {
             "
           >
             <span className="text-black font-bold text-lg">@</span>
+            
+            
             <input
               type="text"
               className="
@@ -57,8 +59,11 @@ const Navbar = () => {
               placeholder="Search User"
               aria-label="Username"
               aria-describedby="basic-addon1"
+              onChange={(e)=>setSearch(e.target.value)}
               style={{ width: '120px' }}
             />
+
+
           </div>
         </form>
 

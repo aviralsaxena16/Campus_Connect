@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Sidebar from './Sidebar';
 
-const Dashboard = () => {
+const Dashboard = ({search}) => {
     const {user}=useUser()
     
     
@@ -19,7 +19,7 @@ const Dashboard = () => {
   return (
     <Container>
     <Row>
-      <Col xs={12} md={4}><Sidebar/></Col>
+      <Col xs={12} md={4}><Sidebar search={search}/></Col>
       <Col xs={12} md={8}>Main content</Col>
     </Row>    
     </Container>

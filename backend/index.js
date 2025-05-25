@@ -141,6 +141,7 @@ app.post("/getChannels", async (req, res) => {
   if (!channels){
     return res.status(201).json({Message:'Something went wrong'})
   }
+  
   res.json({ success: true, channels:channels });
 });
 
