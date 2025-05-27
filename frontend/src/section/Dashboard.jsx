@@ -5,6 +5,8 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Sidebar from './Sidebar';
+import chatWindow from './chatWindow';
+
 
 const Dashboard = ({search}) => {
     const {user}=useUser()
@@ -20,7 +22,7 @@ const Dashboard = ({search}) => {
     <Container>
     <Row>
       <Col xs={12} md={4}><Sidebar search={search}/></Col>
-      <Col xs={12} md={8}>Main content</Col>
+      <Col xs={12} md={8}><chatWindow/></Col>
     </Row>    
     </Container>
   )
