@@ -86,13 +86,14 @@ io.to(roomId).emit('messageReceived', populatedMessage);
 // [Keep existing Socket.IO connection handlers]
 
 
-app.get("messages/:chatId", async (req, res) => {
+app.get("/messages/:chatId", async (req, res) => {
+  
   const { chatId } = req.params;
   const { isChannel } = req.query;
 
-  const filter = isChannel === 'true' ? { channel: chatId } : { chat: chatId };
 
-  const messages = await Message.findOne(filter)
+
+  const messages = await Message.findOne({ chat: chatId })
     .populate("sender", "name")
     .sort({ createdAt: 1 }); // ASC order by time
 

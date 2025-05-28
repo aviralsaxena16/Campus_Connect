@@ -18,12 +18,14 @@ const { isLoaded, user } = useUser();
 if (!isLoaded) return <div>Loading...</div>; // or a spinner
 
 const [newMessage,setNewMessage]=useState('')
-const [messages, setMessages] = useState([]);
+const [messages, setMessages] = useState(['']);
   const messagesEndRef = useRef(null);
 
   // Join selected room (channel or DM)
   useEffect(() => {
   if (selectedChat) {
+    console.log(selectedChat._id)
+    console.log(isChannel)
     // Fetch messages from backend (API)
     axios.get(`http://localhost:3000/messages/${selectedChat._id}?isChannel=${isChannel}`)
       .then(res => {
@@ -44,7 +46,10 @@ const [messages, setMessages] = useState([]);
     if (!socket) return;
 
     const handleMessage = (msg) => {
-      setMessages((prev) => [...prev, msg]);
+      setMessages((prev) => {
+  console.log("Previous messages:", prev);
+  return [...(Array.isArray(prev) ? prev : []), msg];
+});
     };
 
     socket.on('messageReceived', handleMessage);
