@@ -89,6 +89,7 @@ const Sidebar = ({ search }) => {
       )}
 
       {/* Chat list */}
+       <div className="chat-scroll-container" >
       <div className="chat-list">
         {listToRender.length === 0 ? (
           <div className="empty-state">
@@ -119,6 +120,7 @@ const Sidebar = ({ search }) => {
             </div>
           ))
         )}
+        </div>
       </div>
 
       {/* Styles remain unchanged */}
@@ -222,7 +224,48 @@ const Sidebar = ({ search }) => {
           color: #666;
           font-style: italic;
         }
-      `}</style>
+
+        
+    .sidebar-container {
+      /* Existing styles */
+      height: 80vh; /* Fixed height */
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-scroll-container {
+        padding:10px;
+      flex: 1;
+      overflow-y: auto;
+      border: 2px solid black;
+      border-radius: 6px;
+      margin-top: 12px;
+    }
+
+    /* Neo Brutalist Scrollbar */
+    .chat-scroll-container::-webkit-scrollbar {
+      width: 12px;
+      background-color: white;
+      border-left: 2px solid black;
+    }
+
+    .chat-scroll-container::-webkit-scrollbar-thumb {
+      background: #00FF66;
+      border: 2px solid black;
+      border-radius: 0;
+    }
+
+    .chat-scroll-container::-webkit-scrollbar-track {
+      background: white;
+    }
+
+    .chat-list {
+      padding-right: 8px; /* Prevent content clipping */
+    }
+
+    
+  `
+      }</style>
     </div>
   );
 };

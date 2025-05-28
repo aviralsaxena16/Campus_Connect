@@ -92,7 +92,7 @@ app.get("messages/:chatId", async (req, res) => {
 
   const filter = isChannel === 'true' ? { channel: chatId } : { chat: chatId };
 
-  const messages = await Message.find(filter)
+  const messages = await Message.findOne(filter)
     .populate("sender", "name")
     .sort({ createdAt: 1 }); // ASC order by time
 

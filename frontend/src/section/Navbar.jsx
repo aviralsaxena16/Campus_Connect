@@ -68,18 +68,20 @@ const Navbar = ({setSearch}) => {
         </form>
 
         {/* Center: Title */}
-        <h1
-          className="
-            text-black text-3xl font-extrabold text-center
-            px-4 py-2
-            border-2 border-black rounded-lg
-            shadow-[4px_4px_0_0_rgba(0,0,0,1)]
-            bg-[#40d39c]
-            uppercase tracking-tight
-          "
-        >
-          Campus Connect
-        </h1>
+       <h1
+  className="
+    text-black text-xl font-extrabold text-center
+    px-3 py-1 mx-6
+    border-2 border-black rounded-lg
+    shadow-[4px_4px_0_0_rgba(0,0,0,1)]
+    bg-[#40d39c]
+    uppercase tracking-tight
+    w-fit
+  "
+>
+  Campus Connect
+</h1>
+
 
         {/* Right: Search Icon (hidden for now) */}
         <div
