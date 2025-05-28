@@ -46,7 +46,59 @@ const io = new Server(server, {
   },
 });
 
+io.on('connection', (socket) => {
+  console.log(`🔌 New client connected: ${socket.id}`);
+
+  // JOIN ROOM (channel or chat)
+  socket.on('joinRoom', (roomId) => {
+    socket.join(roomId);
+    console.log(`✅ ${socket.id} joined room: ${roomId}`);
+  });
+
+  // NEW MESSAGE
+  socket.on('newMessage', async (messageData) => {
+    try {
+      const { senderId, content, chatId, channelId } = messageData;
+
+      // Save to DB
+      const message = await Message.create({
+  sender: senderId,
+  content,
+  chat: chatId || channelId ,
+  
+});
+
+// Populate sender field
+const populatedMessage = await message.populate('sender', 'name');
+
+const roomId = chatId || channelId;
+io.to(roomId).emit('messageReceived', populatedMessage);
+
+    } catch (err) {
+      console.error('❌ Error saving message:', err.message);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`❌ Client disconnected: ${socket.id}`);
+  });
+});
 // [Keep existing Socket.IO connection handlers]
+
+
+app.get("messages/:chatId", async (req, res) => {
+  const { chatId } = req.params;
+  const { isChannel } = req.query;
+
+  const filter = isChannel === 'true' ? { channel: chatId } : { chat: chatId };
+
+  const messages = await Message.find(filter)
+    .populate("sender", "name")
+    .sort({ createdAt: 1 }); // ASC order by time
+
+  res.json(messages);
+});
+
 
 // MongoDB Connection (no changes needed)
 mongoose.connect('mongodb+srv://aviralsaxena2006:WVYis3UqHDMsZVLC@cluster0.elh7l9d.mongodb.net/campus_connect?retryWrites=true&w=majority&appName=Cluster0')
@@ -59,7 +111,7 @@ app.get('/', (req, res) => res.send('API is working 🚀'));
 app.post('/register', async (req, res) => {
   try {
     const userData = req.body;
-    
+
     if (!userData?.id || !userData?.email) {
       return res.status(400).json({ message: 'Invalid user data: Missing id or email' });
     }
@@ -84,10 +136,10 @@ app.post('/getUser', async (req, res) => {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-   
+
     const user = await User.findOne({ id: req.auth.userId });
     if (!user) return res.status(404).json({ success: false });
-    res.json({ success: true, person: user }); 
+    res.json({ success: true, person: user });
   } catch (error) {
     console.error('GetUser error:', error);
     res.status(400).json({ message: 'Request failed' });
@@ -98,15 +150,15 @@ app.post('/getUser', async (req, res) => {
 app.put('/updateUser', async (req, res) => {
   try {
     if (!req.auth?.userId) return res.status(401).json({ message: 'Unauthorized' });
-    
+
     const updatedUser = await User.findOneAndUpdate(
       { id: req.auth.userId },
       req.body,
       { new: true }
     );
-    
+
     if (!updatedUser) return res.status(404).json({ message: 'User not found' });
-    
+
     res.json({ success: true, user: updatedUser });
   } catch (error) {
     console.error(error);
@@ -117,18 +169,18 @@ app.put('/updateUser', async (req, res) => {
 // Image upload endpoint
 app.post('/uploadImage', async (req, res) => {
   try {
-    if (!req.auth?.userId) return res.status(401).json({message:'Unauthorised access'})
-    
-      
-      const file = req.files.image; // file comes from frontend
-      const result = await cloudinary.uploader.upload(file.tempFilePath, {
-        folder: 'profile_pics',
-      });
-    const updatedUser =await User.findOneAndUpdate({id: req.auth.userId},{ imageUrl: result.secure_url } , { new: true })
-     
+    if (!req.auth?.userId) return res.status(401).json({ message: 'Unauthorised access' })
+
+
+    const file = req.files.image; // file comes from frontend
+    const result = await cloudinary.uploader.upload(file.tempFilePath, {
+      folder: 'profile_pics',
+    });
+    const updatedUser = await User.findOneAndUpdate({ id: req.auth.userId }, { imageUrl: result.secure_url }, { new: true })
+
     if (!updatedUser) return res.status(404).json({ message: 'User not found' });
     console.log(updatedUser)
-    res.json({ success: true, user:updatedUser ,imageUrl:result.secure_url});
+    res.json({ success: true, user: updatedUser, imageUrl: result.secure_url });
   } catch (error) {
     console.error(error);
     res.status(400).json({ message: 'Update failed' });
@@ -138,20 +190,20 @@ app.post('/uploadImage', async (req, res) => {
 
 app.post("/getChannels", async (req, res) => {
   const channels = await Chat.find({ isChannel: true });
-  if (!channels){
-    return res.status(201).json({Message:'Something went wrong'})
+  if (!channels) {
+    return res.status(201).json({ Message: 'Something went wrong' })
   }
-  
-  res.json({ success: true, channels:channels });
+
+  res.json({ success: true, channels: channels });
 });
 
 
 app.post("/getChats", async (req, res) => {
   const chats = await Chat.find({ isChannel: false });
-  if (!chats){
-    return res.status(201).json({Message:'Something went wrong'})
+  if (!chats) {
+    return res.status(201).json({ Message: 'Something went wrong' })
   }
-  res.json({ success: true, chats:chats});
+  res.json({ success: true, chats: chats });
 });
 
 

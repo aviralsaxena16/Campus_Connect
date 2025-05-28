@@ -105,7 +105,7 @@ const Sidebar = ({ search }) => {
                 {item?.profilePic ? (
                   <img src={item.profilePic} alt={item.chatName || item.name || 'Chat'} />
                 ) : (
-                  <div className="avatar-placeholder">
+                  <div className="avatar-placeholder" onClick={()=>{setSelectedChat(item)}}>
                     {(item?.chatName?.[0] || item?.name?.[0] || 'C').toUpperCase()}
                   </div>
                 )}
