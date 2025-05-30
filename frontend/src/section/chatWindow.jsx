@@ -62,7 +62,7 @@ const [messages, setMessages] = useState(['']);
 
   // Handle sending message
   const handleSendMessage = () => {
-    console.log('Message sent')
+    // console.log('Message sent')
 
   // if (!newMessage.trim() || !selectedChat || !user) return;
     const messageData = {
@@ -70,7 +70,7 @@ const [messages, setMessages] = useState(['']);
       sender: { _id: user.id || user._id , name: user.fullName },
       ...(isChannel ? { channelId: selectedChat._id } : { chatId: selectedChat._id }),
     };
-    console.log("📨 New message received:");
+    // console.log("📨 New message received:");
     console.log(messageData)
     socket.emit('newMessage', messageData);
   setNewMessage('');
