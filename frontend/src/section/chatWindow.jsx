@@ -105,7 +105,9 @@ return (
             >
               {!isMe && (
                 <img
-                  src={'https://static.thenounproject.com/png/5100711-200.png'}
+                  src={ msg.sender && msg.sender.imageUrl
+        ? msg.sender.imageUrl
+        : 'https://static.vecteezy.com/system/resources/previews/030/504/836/non_2x/avatar-account-flat-isolated-on-transparent-background-for-graphic-and-web-design-default-social-media-profile-photo-symbol-profile-and-people-silhouette-user-icon-vector.jpg'}
                   alt="Sender"
                   className="w-8 h-8 rounded-full border-2 border-black shadow-[2px_2px_0_0_#000] mr-2"
                 />
@@ -121,7 +123,7 @@ return (
                   relative
                 `}
               >
-                <div className="text-xs mb-1 tracking-wide font-mono">{msg.sender?.name || 'User'}</div>
+                <div className="text-xs mb-1 tracking-wide font-mono">{msg.sender && msg.sender.firstName ? msg.sender.firstName : 'User'}</div>
                 <div className="text-base">{msg.content}</div>
                 <div className="text-[10px] font-mono mt-1 text-right opacity-60">{/* timestamp here if needed */}</div>
               </div>
