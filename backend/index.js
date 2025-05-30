@@ -57,27 +57,25 @@ io.on('connection', (socket) => {
 
   // NEW MESSAGE
   socket.on('newMessage', async (messageData) => {
-    try {
-      const { senderId, content, chatId, channelId } = messageData;
+  try {
+    const { sender, content, chatId, channelId } = messageData;
 
-      // Save to DB
-      const message = await Message.create({
-  sender: senderId,
-  content,
-  chat: chatId || channelId ,
-  
+  const mongoUser = await User.findOne({ id: sender._id });
+if (!mongoUser) throw new Error('User not found');
+
+    const message = await Message.create({
+      sender: mongoUser._id,
+      content,
+      chat: chatId || channelId,
+    });
+
+    const roomId = chatId || channelId;
+    io.to(roomId).emit('messageReceived', message);
+
+  } catch (error) {
+    console.error("❌ Error saving message:", error);
+  }
 });
-
-// Populate sender field
-const populatedMessage = await message.populate('sender', 'name');
-
-const roomId = chatId || channelId;
-io.to(roomId).emit('messageReceived', populatedMessage);
-
-    } catch (err) {
-      console.error('❌ Error saving message:', err.message);
-    }
-  });
 
   socket.on('disconnect', () => {
     console.log(`❌ Client disconnected: ${socket.id}`);
@@ -93,8 +91,8 @@ app.get("/messages/:chatId", async (req, res) => {
 
 
 
-  const messages = await Message.findOne({ chat: chatId })
-    .populate("sender", "name")
+  const messages = await Message.find({ chat: chatId })
+    .populate("ssender")
     .sort({ createdAt: 1 }); // ASC order by time
 
   res.json(messages);

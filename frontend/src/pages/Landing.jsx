@@ -26,7 +26,7 @@ const Landing = () => {
         console.log('Sending user data to backend:', userData);
 
         try {
-          const response = await axios.post('http://localhost:3000/register', userData, {
+          const response = await axios.post('http://localhost:3000/user/register', userData, {
             headers: {
               'Content-Type': 'application/json',
             },

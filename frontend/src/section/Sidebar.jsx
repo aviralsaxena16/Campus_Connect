@@ -20,7 +20,7 @@ const Sidebar = ({ search }) => {
       try {
         const token = await getToken();
         const response = await axios.post(
-          'http://localhost:3000/getChannels',
+          'http://localhost:3000/chat/getChannels',
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -36,7 +36,7 @@ const Sidebar = ({ search }) => {
       try {
         const token = await getToken();
         const res = await axios.post(
-          'http://localhost:3000/getChats',
+          'http://localhost:3000/chat/getChats',
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );

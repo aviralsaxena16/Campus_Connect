@@ -27,9 +27,10 @@ const [messages, setMessages] = useState(['']);
     console.log(selectedChat._id)
     console.log(isChannel)
     // Fetch messages from backend (API)
-    axios.get(`http://localhost:3000/messages/${selectedChat._id}?isChannel=${isChannel}`)
+    axios.get(`http://localhost:3000/message/messages/${selectedChat._id}?isChannel=${isChannel}`)
       .then(res => {
-        setMessages(res.data); // Store in context/state
+        setMessages(res.data); 
+        console.log(messages)
         socket.emit("joinRoom", selectedChat._id); // Join room
       });
   }
@@ -66,7 +67,7 @@ const [messages, setMessages] = useState(['']);
   // if (!newMessage.trim() || !selectedChat || !user) return;
     const messageData = {
       content: newMessage,
-      sender: { _id: user.id, name: user.fullName },
+      sender: { _id: user.id || user._id , name: user.fullName },
       ...(isChannel ? { channelId: selectedChat._id } : { chatId: selectedChat._id }),
     };
     console.log("📨 New message received:");
@@ -104,7 +105,7 @@ return (
             >
               {!isMe && (
                 <img
-                  src={msg.sender?.avatar || '/default-avatar.png'}
+                  src={'https://static.thenounproject.com/png/5100711-200.png'}
                   alt="Sender"
                   className="w-8 h-8 rounded-full border-2 border-black shadow-[2px_2px_0_0_#000] mr-2"
                 />
