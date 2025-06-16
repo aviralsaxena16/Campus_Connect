@@ -32,12 +32,17 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   console.log(`🔌 Client connected: ${socket.id}`);
-
+  const id = socket.handshake.query.userId
+  console.log('our id',id)
   socket.on('joinRoom', (roomId) => {
     socket.join(roomId);
     console.log(`✅ ${socket.id} joined room: ${roomId}`);
   });
 
+  if (id) {
+    console.log('execute')
+   User.findOneAndUpdate({ id }, { isOnline: true }).exec();
+  }
   socket.on('newMessage', async (messageData) => {
     try {
       const { sender, content, chatId, channelId } = messageData;
@@ -58,6 +63,9 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log(`❌ Client disconnected: ${socket.id}`);
+    if (id) {
+      User.findOneAndUpdate({ id }, { isOnline: false }).exec();
+    }
   });
 });
 

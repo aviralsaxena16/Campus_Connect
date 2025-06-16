@@ -17,8 +17,6 @@ const Login = () => {
         <Button variant="warning" onClick={()=>{setFirst(false)}}>Register</Button>
       </ButtonGroup>
        
-       
-      
       {First ? <Sign/> : <SignUpPage/>}
     
     

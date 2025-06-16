@@ -53,6 +53,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    isOnline: { type: Boolean, default: false },
     campusId: {
         type: String,
         unique: true,

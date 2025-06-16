@@ -10,18 +10,10 @@ router.post('/getChannels', async (req, res) => {
   res.json({ success: true, channels });
 });
 
-// router.post('/getChats', async (req, res) => {
-//   const chats = await User.find({});
-//   console.log(chats)
-//   res.json({ success: true, chats });
-// });
 
 // Get or create all DM chats for current user
 router.post('/getChats', async (req, res) => {
-  // const { userId } = req.body;
-
-  // if (!userId) return res.status(400).json({ success: false, message: "Missing userId" });
-
+  
   try {
     const me = await User.findOne({ id: req.auth.userId });
     if (!me) return res.status(404).json({ success: false, message: "User not found" });
@@ -40,11 +32,12 @@ router.post('/getChats', async (req, res) => {
           existingChat = await Chat.create({
             chatName: `${otherUser.firstName} ${otherUser.lastName}`,
             isChannel: false,
+            isOnline: otherUser.isOnline,
             profilePic:otherUser.imageUrl,
             users: [me._id, otherUser._id],
           });
         }
-        await existingChat.populate('users', 'firstName lastName imageUrl id');
+        await existingChat.populate('users', 'firstName lastName imageUrl isOnline id');
         return existingChat;
       })
     );
@@ -57,7 +50,8 @@ router.post('/getChats', async (req, res) => {
     return {
       _id: chat._id,
       name: `${otherUser.firstName} ${otherUser.lastName}`,
-      profilePic: otherUser.imageUrl
+      profilePic: otherUser.imageUrl,
+      isOnline: otherUser.isOnline ?? false
     
     };
   });

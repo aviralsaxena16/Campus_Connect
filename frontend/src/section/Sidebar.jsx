@@ -5,12 +5,11 @@ import axios from 'axios';
 import { useChat } from '../../context/ChatContext';
 
 const Sidebar = ({ search }) => {
-  const [tab, setTab] = useState(0); // 0 = Channels, 1 = Personal
+  const [tab, setTab] = useState(0); 
   const [chats, setChats] = useState([]);
   const [channels, setChannels] = useState([]);
   const { getToken } = useAuth();
-  const { setSelectedChat, setIsChannel } = useChat()
-
+  const { setSelectedChat, setIsChannel } = useChat();
 
   const searchTerm = (search || '').trim().toLowerCase();
   const isSearching = searchTerm.length > 0;
@@ -89,41 +88,59 @@ const Sidebar = ({ search }) => {
       )}
 
       {/* Chat list */}
-       <div className="chat-scroll-container" >
-      <div className="chat-list">
-        {listToRender.length === 0 ? (
-          <div className="empty-state">
-            {isSearching ? 'No matching results.' : 'No items found.'}
-          </div>
-        ) : (
-          listToRender.map((item, index) => (
-            <div key={item?._id ?? `item-${index}`} onClick={() => {
-              setSelectedChat(item);
-              setIsChannel(tab === 0); // 0 => channels, 1 => DMs
-            }}
-              className="chat-item">
-              <div className="avatar">
-                {item?.profilePic ? (
-                  <img src={item.profilePic} alt={item.chatName || item.name || 'Chat'} />
-                ) : (
-                  <div className="avatar-placeholder" onClick={()=>{setSelectedChat(item)}}>
-                    {(item?.chatName?.[0] || item?.name?.[0] || 'C').toUpperCase()}
-                  </div>
-                )}
-              </div>
-              <div className="chat-details">
-                <h3>{item?.chatName || item?.name || 'Unnamed Chat'}</h3>
-                {item?.latestMessage && (
-                  <p>{item.latestMessage.content}</p>
-                )}
-              </div>
+      <div className="chat-scroll-container">
+        <div className="chat-list">
+          {listToRender.length === 0 ? (
+            <div className="empty-state">
+              {isSearching ? 'No matching results.' : 'No items found.'}
             </div>
-          ))
-        )}
+          ) : (
+            listToRender.map((item, index) => {
+              // Determine if the item is a chat (has isOnline property)
+              const isChat = typeof item.isOnline !== 'undefined';
+
+              return (
+                <div
+                  key={item?._id ?? `item-${index}`}
+                  onClick={() => {
+                    setSelectedChat(item);
+                    setIsChannel(tab === 0); // 0 => channels, 1 => DMs
+                  }}
+                  className="chat-item"
+                >
+                  <div className="avatar" style={{ position: 'relative' }}>
+                    {item?.profilePic ? (
+                      <img src={item.profilePic} alt={item.chatName || item.name || 'Chat'} />
+                    ) : (
+                      <div className="avatar-placeholder" onClick={() => { setSelectedChat(item) }}>
+                        {(item?.chatName?.[0] || item?.name?.[0] || 'C').toUpperCase()}
+                      </div>
+                    )}
+                    {/* Show online indicator for chats only */}
+                    {tab===1 && item.isOnline && (
+                      <span className="online-dot" title="Online"></span>
+                    )}
+                  </div>
+                  <div className="chat-details">
+                    <h3>
+                      {item?.chatName || item?.name || 'Unnamed Chat'}
+                      {/* Show inline dot for chat name (optional, remove if not needed) */}
+                      {tab===1 && item.isOnline && (
+                        <span className="online-dot-inline" title="Online"></span>
+                      )}
+                    </h3>
+                    {item?.latestMessage && (
+                      <p>{item.latestMessage.content}</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </div>
 
-      {/* Styles remain unchanged */}
+      {/* Styles remain unchanged except for the online-dot */}
       <style jsx>{`
         .sidebar-container {
           background-color: white;
@@ -134,6 +151,9 @@ const Sidebar = ({ search }) => {
           max-width: 350px;
           box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.9);
           margin: 10px;
+          height: 80vh;
+          display: flex;
+          flex-direction: column;
         }
         .tab-buttons {
           display: flex;
@@ -165,6 +185,7 @@ const Sidebar = ({ search }) => {
           display: flex;
           flex-direction: column;
           gap: 10px;
+          padding-right: 8px;
         }
         .chat-item {
           display: flex;
@@ -192,6 +213,7 @@ const Sidebar = ({ search }) => {
           display: flex;
           align-items: center;
           justify-content: center;
+          position: relative;
         }
         .avatar-placeholder {
           font-weight: bold;
@@ -224,48 +246,53 @@ const Sidebar = ({ search }) => {
           color: #666;
           font-style: italic;
         }
+        .chat-scroll-container {
+          padding:10px;
+          flex: 1;
+          overflow-y: auto;
+          border: 2px solid black;
+          border-radius: 6px;
+          margin-top: 12px;
+        }
+        .chat-scroll-container::-webkit-scrollbar {
+          width: 12px;
+          background-color: white;
+          border-left: 2px solid black;
+        }
+        .chat-scroll-container::-webkit-scrollbar-thumb {
+          background: #00FF66;
+          border: 2px solid black;
+          border-radius: 0;
+        }
+        .chat-scroll-container::-webkit-scrollbar-track {
+          background: white;
+        }
 
-        
-    .sidebar-container {
-      /* Existing styles */
-      height: 80vh; /* Fixed height */
-      display: flex;
-      flex-direction: column;
-    }
-
-    .chat-scroll-container {
-        padding:10px;
-      flex: 1;
-      overflow-y: auto;
-      border: 2px solid black;
-      border-radius: 6px;
-      margin-top: 12px;
-    }
-
-    /* Neo Brutalist Scrollbar */
-    .chat-scroll-container::-webkit-scrollbar {
-      width: 12px;
-      background-color: white;
-      border-left: 2px solid black;
-    }
-
-    .chat-scroll-container::-webkit-scrollbar-thumb {
-      background: #00FF66;
-      border: 2px solid black;
-      border-radius: 0;
-    }
-
-    .chat-scroll-container::-webkit-scrollbar-track {
-      background: white;
-    }
-
-    .chat-list {
-      padding-right: 8px; /* Prevent content clipping */
-    }
-
-    
-  `
-      }</style>
+        /* ONLINE DOT */
+        .online-dot {
+          position: absolute;
+          bottom: 2px;
+          right: 2px;
+          width: 12px;
+          height: 12px;
+          background: #00FF66;
+          border: 2px solid black;
+          border-radius: 50%;
+          box-shadow: 0 0 0 1px white;
+        }
+        /* Optional: Inline dot next to name
+        .online-dot-inline {
+          display: inline-block;
+          margin-left: 6px;
+          width: 10px;
+          height: 10px;
+          background: #00FF66;
+          border: 1.5px solid black;
+          border-radius: 50%;
+          vertical-align: middle;
+        }
+        */
+      `}</style>
     </div>
   );
 };

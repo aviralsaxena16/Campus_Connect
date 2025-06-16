@@ -6,6 +6,7 @@ const chatModel = mongoose.Schema(
     name: String,
     isChannel: { type: Boolean, default: false }, // ✅ Add this
     users: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    isOnline: { type: Boolean, default: false },
     latestMessage: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message",

@@ -1,19 +1,28 @@
-import { useContext, createContext, useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import { useContext, createContext, useEffect, useState } from "react";
+import { io } from "socket.io-client";
+import { useUser } from "@clerk/clerk-react";
 
 const SocketContext = createContext(null);
 
 export const SocketProvider = ({ children }) => {
+  const { user } = useUser(); // ✅ Moved inside the component
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:3000');
+    if (!user) return;
+
+    const newSocket = io("http://localhost:3000", {
+      query: {
+        userId: user.id, // ✅ Clerk user ID
+      },
+    });
+
     setSocket(newSocket);
 
     return () => {
       newSocket.disconnect();
     };
-  }, []);
+  }, [user]);
 
   return (
     <SocketContext.Provider value={socket}>
