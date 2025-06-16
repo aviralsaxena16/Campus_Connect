@@ -15,7 +15,7 @@ import userRoutes from './routes/user.routes.js'
 import messageRoutes from './routes/message.routes.js'
 import chatRoutes from './routes/chat.routes.js'
 import uploadRoutes from './routes/upload.routes.js'
-
+import uploaderRoutes from './routes/uploader.routes.js';
 import cloudinary from './config/cloudinary.js';
 
 const app = express();
@@ -77,7 +77,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
 }));
 app.use(express.json());
-app.use(fileUpload({ useTempFiles: true }));
+// app.use(fileUpload({ useTempFiles: true }));
 
 // Clerk middleware
 if (!process.env.CLERK_PUBLISHABLE_KEY || !process.env.CLERK_SECRET_KEY) {
@@ -93,6 +93,7 @@ app.use('/message', messageRoutes);
 app.use('/upload', uploadRoutes);
 app.use('/user', userRoutes);
 app.use('/chat', chatRoutes);
+app.use('/uploader', uploaderRoutes);
 
 // DB Connect
 mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://aviralsaxena2006:WVYis3UqHDMsZVLC@cluster0.elh7l9d.mongodb.net/campus_connect?retryWrites=true&w=majority&appName=Cluster0')

@@ -9,12 +9,11 @@ const ChatWindow = () => {
   const socket = useSocket();
   const { selectedChat, isChannel } = useChat();
   const { isLoaded, user } = useUser();
+  const [newMessage, setNewMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
 
   if (!isLoaded) return <div>Loading...</div>;
-
-  const [newMessage, setNewMessage] = useState('')
-  const [messages, setMessages] = useState(['']);
-  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (selectedChat) {
@@ -42,14 +41,48 @@ const ChatWindow = () => {
   }, [socket, setMessages]);
 
   const handleSendMessage = () => {
+    if (!newMessage.trim()) return;
+
     const messageData = {
       content: newMessage,
       sender: { _id: user.id || user._id, name: user.fullName },
       ...(isChannel ? { channelId: selectedChat._id } : { chatId: selectedChat._id }),
     };
+
     socket.emit('newMessage', messageData);
     setNewMessage('');
   };
+
+ const handleImageUpload = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("sender", user.id || user._id);
+  formData.append("chatId", selectedChat._id);
+
+  try {
+    const res = await fetch("http://localhost:3000/uploader/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      
+      setMessages((prev) => [...prev, data.message]);
+      socket.emit("newMessage", data.message);
+    } else {
+      alert("Image upload failed: " + (data.error || "Unknown error"));
+    }
+  } catch (err) {
+    alert("Upload failed");
+    console.error("Upload failed", err);
+  }
+  // Reset file input (optional, to allow re-upload of the same file)
+  e.target.value = "";
+};
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') handleSendMessage();
@@ -68,7 +101,6 @@ const ChatWindow = () => {
           <h2 className="text-2xl font-extrabold tracking-tight text-black uppercase">
             {selectedChat?.name || selectedChat?.chatName || 'Chat'}
           </h2>
-          {/* Online status for DM only */}
           {!isChannel && selectedChat?.isOnline && (
             <div className="flex items-center mt-1">
               <span className="inline-block w-3 h-3 bg-[#00FF66] border-2 border-black rounded-full mr-2"></span>
@@ -83,33 +115,29 @@ const ChatWindow = () => {
         {Array.isArray(messages) && messages.map((msg, idx) => {
           const isMe = msg.sender?._id === user.id;
           return (
-            <div
-              key={msg._id || idx}
-              className={`flex items-end ${isMe ? 'justify-end' : 'justify-start'}`}
-            >
+            <div key={msg._id || idx} className={`flex items-end ${isMe ? 'justify-end' : 'justify-start'}`}>
               {!isMe && (
                 <img
-                  src={msg.sender && msg.sender.imageUrl
-                    ? msg.sender.imageUrl
-                    : 'https://static.vecteezy.com/system/resources/previews/030/504/836/non_2x/avatar-account-flat-isolated-on-transparent-background-for-graphic-and-web-design-default-social-media-profile-photo-symbol-profile-and-people-silhouette-user-icon-vector.jpg'}
+                  src={msg.sender?.imageUrl || 'https://static.vecteezy.com/system/resources/previews/030/504/836/non_2x/avatar-account-flat-isolated-on-transparent-background-for-graphic-and-web-design-default-social-media-profile-photo-symbol-profile-and-people-silhouette-user-icon-vector.jpg'}
                   alt="Sender"
                   className="w-8 h-8 rounded-full border-2 border-black shadow-[2px_2px_0_0_#000] mr-2"
                 />
               )}
-              <div
-                className={`
-                  max-w-xs px-4 py-2
-                  ${isMe
-                    ? 'bg-[#00FF66] text-black border-4 border-black shadow-[4px_4px_0_0_#000] rounded-br-3xl rounded-tl-3xl rounded-bl-lg'
-                    : 'bg-[#FFD600] text-black border-4 border-black shadow-[4px_4px_0_0_#000] rounded-bl-3xl rounded-tr-3xl rounded-br-lg'
+              <div className={`
+                max-w-xs px-4 py-2
+                ${isMe
+                  ? 'bg-[#00FF66] text-black border-4 border-black shadow-[4px_4px_0_0_#000] rounded-br-3xl rounded-tl-3xl rounded-bl-lg'
+                  : 'bg-[#FFD600] text-black border-4 border-black shadow-[4px_4px_0_0_#000] rounded-bl-3xl rounded-tr-3xl rounded-br-lg'}
+                font-bold relative
+              `}>
+                <div className="text-xs mb-1 tracking-wide font-mono">{msg.sender?.firstName || 'User'}</div>
+                <div className="text-base">
+                  {
+                    msg.content?.startsWith('http') && msg.content.includes('cloudinary.com')
+                      ? <img src={msg.fileUrl} alt="uploaded" className="max-w-[200px] max-h-[200px] border-2 border-black mt-1" />
+                      : msg.content
                   }
-                  font-bold
-                  relative
-                `}
-              >
-                <div className="text-xs mb-1 tracking-wide font-mono">{msg.sender && msg.sender.firstName ? msg.sender.firstName : 'User'}</div>
-                <div className="text-base">{msg.content}</div>
-                <div className="text-[10px] font-mono mt-1 text-right opacity-60">{/* timestamp here if needed */}</div>
+                </div>
               </div>
               {isMe && (
                 <img
@@ -124,8 +152,23 @@ const ChatWindow = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input */}
-      <div className="mt-4 flex items-center border-t-4 border-black pt-3">
+      {/* Input & Image Upload */}
+      <div className="mt-4 flex items-center border-t-4 border-black pt-3 gap-2">
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="hidden"
+          id="image-upload"
+        />
+        <label htmlFor="image-upload" className="cursor-pointer">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRtJo_E_vZ6gha9sFxpUzFkqG1FYoQvsy1ArQ&s" // Replace with an actual image icon if you like
+            alt="Upload"
+            className="w-10 h-10 border-4 border-black rounded-lg shadow-[4px_4px_0_0_#000] p-1"
+          />
+        </label>
+
         <input
           type="text"
           value={newMessage}
@@ -134,14 +177,16 @@ const ChatWindow = () => {
           className="flex-1 px-4 py-2 border-4 border-black rounded-lg shadow-[4px_4px_0_0_#000] font-bold text-black bg-[#F8F8F8] focus:outline-none"
           placeholder="Type a message..."
         />
+
         <button
           onClick={handleSendMessage}
-          className="ml-3 px-6 py-2 bg-[#00FF66] border-4 border-black rounded-lg shadow-[4px_4px_0_0_#000] text-black font-extrabold text-lg hover:bg-black hover:text-[#00FF66] transition"
+          className="px-6 py-2 bg-[#00FF66] border-4 border-black rounded-lg shadow-[4px_4px_0_0_#000] text-black font-extrabold text-lg hover:bg-black hover:text-[#00FF66] transition"
         >
           Send
         </button>
       </div>
-      {/* Custom Scrollbar for Neo-brutalism */}
+
+      {/* Custom Scrollbar */}
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 12px;
@@ -161,4 +206,4 @@ const ChatWindow = () => {
   );
 }
 
-export default ChatWindow
+export default ChatWindow;
