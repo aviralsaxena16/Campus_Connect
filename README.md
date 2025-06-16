@@ -48,5 +48,5 @@
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/your-username/campus-connect.git
+git clone https://github.com/aviralsaxena16/campus-connect.git
 cd campus-connect

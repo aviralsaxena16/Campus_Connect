@@ -20,7 +20,7 @@ import cloudinary from './config/cloudinary.js';
 
 const app = express();
 const server = http.createServer(app);
-
+export default app
 // Socket.IO setup
 const io = new Server(server, {
   cors: {
@@ -31,16 +31,16 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-  console.log(`🔌 Client connected: ${socket.id}`);
+  // console.log(`🔌 Client connected: ${socket.id}`);
   const id = socket.handshake.query.userId
-  console.log('our id',id)
+  // console.log('our id',id)
   socket.on('joinRoom', (roomId) => {
     socket.join(roomId);
     console.log(`✅ ${socket.id} joined room: ${roomId}`);
   });
 
   if (id) {
-    console.log('execute')
+    // console.log('execute')
    User.findOneAndUpdate({ id }, { isOnline: true }).exec();
   }
   socket.on('newMessage', async (messageData) => {
