@@ -14,7 +14,7 @@
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.13.23",
     "@clerk/express": "^1.4.18",
-    "cloudinary": "^2.6.1",
+    "cloudinary": "^1.41.3",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
@@ -25,8 +25,7 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^3.1.9",
     "socket.io": "^4.8.1",
-    "unique-names-generator": "^4.7.1",
-    "vm2": "^3.9.19"
+    "unique-names-generator": "^4.7.1"
   },
   "devDependencies": {
     "jest": "^30.0.0",
