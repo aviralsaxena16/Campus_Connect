@@ -1,52 +1,55 @@
-# 📚 Campus Connect
+# 🏫 Campus Connect – Real-time Chat Platform for IIT Bhilai
 
-**Campus Connect** is a real-time chat application designed to bring students of IIT Bhilai together — whether it's for course discussions, club coordination, or just casual conversations. Built with the MERN stack and Socket.IO, it supports both private DMs and public channels.
+Campus Connect is a real-time chat application designed specifically for students of IIT Bhilai. It facilitates seamless communication through public channels and private messages, supporting media sharing and online presence—perfect for connecting with peers across hostels, clubs, and academics.
 
----
+
+<img src="https://github.com/aviralsaxena16/Campus_Connect/blob/main/frontend/public/ss1.png?raw=true" width="500px">
+<img src="https://github.com/aviralsaxena16/Campus_Connect/blob/main/frontend/public/ss2.png?raw=true" width="500px">
+
 
 ## 🚀 Features
 
-- 🔐 **User Authentication**
-  - Secure login & registration
-  - Clerk based Authentication
+- 💬 **Channel-Based Communication** – Join topic-specific public channels like Clubs, Hostels, and Coding Help.
+- 🔒 **Direct Messaging (DM)** – One-on-one chats with any user of the platform.
+- 🖼️ **Image & File Sharing** – Upload and share media using Cloudinary integration.
+- 👤 **User Profiles** – View and edit basic profile information within the app.
+- 🟢 **Online/Offline Status** – See who’s currently online in real time.
+- 🔔 **Real-Time Messaging** – Instant message delivery via WebSockets (Socket.IO).
 
-- 💬 **Chat Dashboard**
-  - WhatsApp-style UI
-  - Sidebar with recent conversations (DMs)
-  - Click on a user/channel to open chat
+## 🧑‍💻 Tech Stack
 
-- 🌐 **Public Channels**
-  - Default 8–10 channels available to all users
-  - Great for topic-based group discussions
+- **Frontend**: React.js, Tailwind CSS  
+- **Backend**: Node.js, Express.js  
+- **Database**: MongoDB  
+- **Real-Time Engine**: Socket.IO  
+- **Authentication**: Clerk  
+- **Media Upload**: Cloudinary  
+- **Deployment**: Vercel / Render
 
-- 🗨️ **Real-time Messaging**
-  - Built with **Socket.IO** for instant updates
-  - Supports both DMs and public channels
+## 🏗️ Architecture
 
-- 📱 **Responsive Design**
-  - Clean and mobile-friendly interface
-  - Neo-brutalism theme
+- MERN stack base with scalable REST APIs
+- WebSocket-powered messaging layer for real-time communication
+- Secure media storage and access via Cloudinary
+- Modular codebase with clean separation of frontend/backend logic
 
----
-
-## 🛠️ Tech Stack
-
-### Frontend:
-- **React.js**
-- **Socket.IO Client**
-- **Tailwind CSS**
-
-### Backend:
-- **Node.js** + **Express.js**
-- **Socket.IO Server**
-- **MongoDB** with Mongoose
-
----
-
-## ⚙️ Setup Instructions
-
-1. **Clone the repository**
+## 🛠️ Setup Instructions
 
 ```bash
-git clone https://github.com/aviralsaxena16/campus-connect.git
-cd campus-connect
+# Clone the repository
+git clone https://github.com/aviralsaxena16/Campus_Connect.git
+cd Campus_Connect
+
+# Install dependencies
+npm install
+
+# Add environment variables
+# Example: .env file
+# MONGODB_URI=your_mongodb_connection_string
+# CLOUDINARY_CLOUD_NAME=xxx
+# CLOUDINARY_API_KEY=xxx
+# CLOUDINARY_API_SECRET=xxx
+# CLERK_API_KEY=xxx
+
+# Run the app
+npm run dev
