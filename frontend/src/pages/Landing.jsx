@@ -47,12 +47,20 @@ const Landing = () => {
   if (!isSignedIn) {
     return (
       <div
-        className="h-screen w-full bg-cover bg-center justify-center items-center flex"
-        style={{ backgroundImage: `url(https://png.pngtree.com/thumb_back/fw800/background/20190828/pngtree-80-style-background-with-geometric-colorful-shapes-image_307997.jpg)` }}
+        className="relative h-screen w-full bg-cover bg-center flex justify-center items-center"
+        style={{
+          backgroundImage:
+            `url(https://png.pngtree.com/thumb_back/fw800/background/20190828/pngtree-80-style-background-with-geometric-colorful-shapes-image_307997.jpg)`,
+        }}
       >
         <SignedOut>
           <Login />
         </SignedOut>
+
+        {/* Signature Footer */}
+        <div className="absolute bottom-4 right-4 text-sm text-white bg-black/40 px-3 py-1 rounded-full shadow-lg font-mono tracking-wide">
+          Made by Aviral Saxena 🚀
+        </div>
       </div>
     );
   }

@@ -12,6 +12,9 @@ const [search,setSearch]=useState('')
 >
   <Navbar setSearch={setSearch} />
   <Dashboard search={search} />
+   <div className="absolute bottom-4 right-4 text-sm text-white bg-black/40 px-3 py-1 rounded-full shadow-lg font-mono tracking-wide">
+          Made by Aviral Saxena 🚀
+        </div>
 </div>
 
   )
