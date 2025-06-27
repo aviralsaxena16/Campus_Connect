@@ -1,8 +1,8 @@
 import { io } from "socket.io-client";
 
-const socket = io(process.env.REACT_APP_API_BASE_URL, {
-  transports: ["websocket", "polling"], // Ensure fallback to polling if WebSocket fails
-  withCredentials: true, // Match backend CORS settings
+const socket = io(import.meta.env.VITE_API_BASE_URL, {
+  transports: ["websocket", "polling"], // fallback to polling
+  withCredentials: true, // match backend CORS settings
 });
 
 export default socket;
