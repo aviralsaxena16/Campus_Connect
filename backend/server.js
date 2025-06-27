@@ -3,7 +3,6 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import { clerkMiddleware } from '@clerk/express';
-import fileUpload from 'express-fileupload';
 import http from 'http';
 import { Server } from 'socket.io';
 
@@ -11,38 +10,49 @@ import { Server } from 'socket.io';
 import User from './model/User.js';
 import Message from './model/MessageModel.js';
 // Routes
-import userRoutes from './routes/user.routes.js'
-import messageRoutes from './routes/message.routes.js'
-import chatRoutes from './routes/chat.routes.js'
-import uploadRoutes from './routes/upload.routes.js'
+import userRoutes from './routes/user.routes.js';
+import messageRoutes from './routes/message.routes.js';
+import chatRoutes from './routes/chat.routes.js';
+import uploadRoutes from './routes/upload.routes.js';
 import uploaderRoutes from './routes/uploader.routes.js';
-import cloudinary from './config/cloudinary.js';
 
 const app = express();
 const server = http.createServer(app);
-export default app
-// Socket.IO setup
+export default app;
+
+// ✅ Allowed origins (from .env)
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  process.env.FRONTEND_DEV_URL
+];
+
+// ✅ Socket.IO setup
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:5173',
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ['GET', 'POST'],
-    credentials: true,
+    credentials: true
   },
 });
 
 io.on('connection', (socket) => {
-  // console.log(`🔌 Client connected: ${socket.id}`);
-  const id = socket.handshake.query.userId
-  // console.log('our id',id)
+  const id = socket.handshake.query.userId;
+
   socket.on('joinRoom', (roomId) => {
     socket.join(roomId);
     console.log(`✅ ${socket.id} joined room: ${roomId}`);
   });
 
   if (id) {
-    // console.log('execute')
-   User.findOneAndUpdate({ id }, { isOnline: true }).exec();
+    User.findOneAndUpdate({ id }, { isOnline: true }).exec();
   }
+
   socket.on('newMessage', async (messageData) => {
     try {
       const { sender, content, chatId, channelId } = messageData;
@@ -69,17 +79,22 @@ io.on('connection', (socket) => {
   });
 });
 
-// Middleware
+// ✅ Express middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
-  methods: ['GET', 'POST', 'PUT'],
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  methods: ['GET', 'POST', 'PUT'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 }));
 app.use(express.json());
-// app.use(fileUpload({ useTempFiles: true }));
 
-// Clerk middleware
+// ✅ Clerk middleware
 if (!process.env.CLERK_PUBLISHABLE_KEY || !process.env.CLERK_SECRET_KEY) {
   throw new Error('Clerk keys missing');
 }
@@ -88,19 +103,20 @@ app.use(clerkMiddleware({
   secretKey: process.env.CLERK_SECRET_KEY,
 }));
 
-// Routes
+// ✅ Routes
 app.use('/message', messageRoutes);
 app.use('/upload', uploadRoutes);
 app.use('/user', userRoutes);
 app.use('/chat', chatRoutes);
 app.use('/uploader', uploaderRoutes);
 
-// DB Connect
-mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://aviralsaxena2006:WVYis3UqHDMsZVLC@cluster0.elh7l9d.mongodb.net/campus_connect?retryWrites=true&w=majority&appName=Cluster0')
+// ✅ MongoDB connection
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch(err => console.error('❌ DB error:', err));
 
-// Start server
-server.listen(3000, () => {
-  console.log('🚀 Server running on http://localhost:3000');
+// ✅ Start server
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
