@@ -22,8 +22,8 @@ export default app;
 
 // ✅ Allowed origins (from .env)
 const allowedOrigins = [
+  process.env.FRONTEND_DEV_URL,
   process.env.FRONTEND_URL,
-  process.env.FRONTEND_DEV_URL
 ];
 
 // ✅ Socket.IO setup

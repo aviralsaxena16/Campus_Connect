@@ -42,14 +42,14 @@ const ChatWindow = () => {
 
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
-
+    console.log('Started')
     const messageData = {
       content: newMessage,
       sender: { _id: user.id || user._id, name: user.fullName },
       ...(isChannel ? { channelId: selectedChat._id } : { chatId: selectedChat._id }),
     };
-
     socket.emit('newMessage', messageData);
+    console.log('End')
     setNewMessage('');
   };
 

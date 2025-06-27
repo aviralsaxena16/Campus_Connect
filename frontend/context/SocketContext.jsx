@@ -11,7 +11,7 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     if (!user) return;
 
-    const newSocket = io(process.env.REACT_APP_API_BASE_URL, {
+    const newSocket = io(import.meta.env.VITE_API_BASE_URL, {
       query: {
         userId: user.id, // ✅ Clerk user ID
       },
