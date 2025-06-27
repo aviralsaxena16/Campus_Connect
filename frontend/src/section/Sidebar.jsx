@@ -19,7 +19,7 @@ const Sidebar = ({ search }) => {
       try {
         const token = await getToken();
         const response = await axios.post(
-          `${process.env.REACT_APP_API_BASE_URL}/chat/getChannels`,
+          `${import.meta.env.VITE_API_BASE_URL}/chat/getChannels`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -35,7 +35,7 @@ const Sidebar = ({ search }) => {
       try {
         const token = await getToken();
         const res = await axios.post(
-          `${process.env.REACT_APP_API_BASE_URL}/chat/getChats`,
+          `${import.meta.env.VITE_API_BASE_URL}/chat/getChats`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );

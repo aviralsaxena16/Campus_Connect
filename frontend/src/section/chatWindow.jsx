@@ -17,7 +17,7 @@ const ChatWindow = () => {
 
   useEffect(() => {
     if (selectedChat) {
-      axios.get(`${process.env.REACT_APP_API_BASE_URL}/message/messages/${selectedChat._id}?isChannel=${isChannel}`)
+      axios.get(`${import.meta.env.VITE_API_BASE_URL}/message/messages/${selectedChat._id}?isChannel=${isChannel}`)
         .then(res => {
           setMessages(res.data);
           socket.emit("joinRoom", selectedChat._id);
@@ -63,7 +63,7 @@ const ChatWindow = () => {
   formData.append("chatId", selectedChat._id);
 
   try {
-    const res = await fetch(`${process.env.REACT_APP_API_BASE_URL}/uploader/upload`, {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/uploader/upload`, {
       method: "POST",
       body: formData,
     });
