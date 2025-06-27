@@ -16,7 +16,7 @@ const Profile = () => {
       try {
         const token = await getToken();
         const response = await axios.post(
-          'http://localhost:3000/user/getUser',
+          `${process.env.REACT_APP_API_BASE_URL}/user/getUser`,
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -45,7 +45,7 @@ const Profile = () => {
     try {
       const token = await getToken();
       const response = await axios.put(
-        'http://localhost:3000/user/updateUser',
+        `${process.env.REACT_APP_API_BASE_URL}/user/updateUser`,
         { ...tempUser },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -70,7 +70,7 @@ const Profile = () => {
     try {
       const token = await getToken();
       const response = await axios.post(
-        'http://localhost:3000/upload/uploadImage',
+        `${process.env.REACT_APP_API_BASE_URL}/upload/uploadImage`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
